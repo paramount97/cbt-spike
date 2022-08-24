@@ -18,21 +18,29 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class ZodiacService {
 
+//    @Autowired
+//    private WebClient.Builder webClientBuilder;
+
+    private final RestTemplate restTemplate;
+
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    public ZodiacService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Value("${dateprovidervalidator.baseurl}")
-    private String dateProviderServiceURL;
+    private String dateValidatorServiceURL;
+
 
     public String getChineseZodiac(String birthDate) {
-        String uri = UriComponentsBuilder.fromHttpUrl(dateProviderServiceURL)
-                .path("date-validate")
-                .queryParam("Date", birthDate)
-                .toUriString();
+//        String uri = UriComponentsBuilder.fromHttpUrl("http://localhost:8080")
+//                .path("date-validate")
+//                .queryParam("Date", birthDate)
+//                .toUriString();
         HttpHeaders headers = new HttpHeaders();
         headers.add("content-type", "application/json");
 
-        ResponseEntity<DateResponse> responseEntity = new RestTemplate().exchange(uri, HttpMethod.GET,
+        ResponseEntity<DateResponse> responseEntity = restTemplate.exchange("/date-validate", HttpMethod.GET,
                 new HttpEntity<>(headers), DateResponse.class);
 //        DateResponse response = webClientBuilder.get()
 //                .uri(uri)
