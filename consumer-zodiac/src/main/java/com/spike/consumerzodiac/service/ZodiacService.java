@@ -33,20 +33,15 @@ public class ZodiacService {
 
 
     public String getChineseZodiac(String birthDate) {
-//        String uri = UriComponentsBuilder.fromHttpUrl("http://localhost:8080")
-//                .path("date-validate")
-//                .queryParam("Date", birthDate)
-//                .toUriString();
+        String uri = UriComponentsBuilder.fromHttpUrl("dateValidatorServiceURL")
+                .path("date-validate")
+                .queryParam("Date", birthDate)
+                .toUriString();
         HttpHeaders headers = new HttpHeaders();
         headers.add("content-type", "application/json");
 
-        ResponseEntity<DateResponse> responseEntity = restTemplate.exchange("/date-validate", HttpMethod.GET,
+        ResponseEntity<DateResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.GET,
                 new HttpEntity<>(headers), DateResponse.class);
-//        DateResponse response = webClientBuilder.get()
-//                .uri(uri)
-//                .header("content-type", "application/json")
-//                .retrieve()
-//                .build();
 
         if(responseEntity.getBody().getIsValidDate()) {
             LocalDate birthday = LocalDate.of(responseEntity.getBody().getYear(), responseEntity.getBody().getMonth(), responseEntity.getBody().getDay());

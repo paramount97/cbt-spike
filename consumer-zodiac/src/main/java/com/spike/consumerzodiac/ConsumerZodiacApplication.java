@@ -21,7 +21,7 @@ public class ConsumerZodiacApplication {
     }
 
     @Bean
-    RestTemplate productRestTemplate() {
+    RestTemplate getRestTemplate() {
         return new RestTemplateBuilder().build();
     }
 
