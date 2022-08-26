@@ -27,8 +27,8 @@ public class ConsumerZodiacPactTest {
         jo.put("month", 04);
         jo.put("day", 25);
         jo.put("isValidDate", true);
-        return builder.given("valid date from provider")
-                .uponReceiving("validate the correct date")
+        return builder.given("User sends valid date")
+                .uponReceiving("Provider should return date as valid")
                 .method("GET")
                 .path("/date-validate")
                 .queryMatchingDate("Date", "1994-04-25" )
@@ -45,8 +45,8 @@ public class ConsumerZodiacPactTest {
         jo.put("month", 0);
         jo.put("day", 0);
         jo.put("isValidDate", false);
-        return builder.given("Invalid date from provider")
-                .uponReceiving("validate the invalid date")
+        return builder.given("User sends invalid date")
+                .uponReceiving("Provider should return date as invalid")
                 .method("GET")
                 .path("/date-validate")
                 .queryMatchingDate("Date", "1000-34-45" )

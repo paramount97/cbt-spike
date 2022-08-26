@@ -70,6 +70,9 @@
                 <configuration>
                     <pactDirectory>target/pacts</pactDirectory> <!-- Defaults to ${project.build.directory}/pacts -->
                     <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>
+                    <tags>
+                        <tag>main</tag>
+                    </tags>
                     <projectVersion></projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
                     <skipPactPublish></skipPactPublish> <!-- Defaults to false -->
