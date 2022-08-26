@@ -41,9 +41,9 @@ public class ConsumerZodiacPactTest {
     @Pact(consumer = "Consumer-Zodiac", provider = "Provider-Date-Validate")
     RequestResponsePact getInvalidDate(PactDslWithProvider builder) {
         JSONObject jo = new JSONObject();
-        jo.put("year", 1000);
-        jo.put("month", 34);
-        jo.put("day", 45);
+        jo.put("year", 0);
+        jo.put("month", 0);
+        jo.put("day", 0);
         jo.put("isValidDate", false);
         return builder.given("Invalid date from provider")
                 .uponReceiving("validate the invalid date")
@@ -51,7 +51,7 @@ public class ConsumerZodiacPactTest {
                 .path("/date-validate")
                 .queryMatchingDate("Date", "1000-34-45" )
                 .willRespondWith()
-                .status(400)
+                .status(200)
                 .body(jo)
                 .toPact();
     }
@@ -75,10 +75,10 @@ public class ConsumerZodiacPactTest {
         HttpResponse httpResponse = Request.Get(mockServer.getUrl() + "/date-validate?Date=1000-34-45")
                 .execute().returnResponse();
 
-        assertThat(httpResponse.getStatusLine().getStatusCode()).isEqualTo(400);
+        assertThat(httpResponse.getStatusLine().getStatusCode()).isEqualTo(200);
         assertThat(JsonPath.read(httpResponse.getEntity().getContent(), "$.isValidDate").toString()).isEqualTo("false");
     }
 }
 
 
-///TODO: Look into different ways of wring PACT method. REF: https://medium.com/swlh/contract-tests-with-pact-jvm-the-tricky-parts-6b2fee5d139c
+///TODO: Look into different ways of writing PACT method (some are more readable and compact than others). REF: https://medium.com/swlh/contract-tests-with-pact-jvm-the-tricky-parts-6b2fee5d139c

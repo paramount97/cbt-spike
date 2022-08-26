@@ -1,7 +1,9 @@
 package com.spike.providerdatevalidate;
 
+import au.com.dius.pact.provider.junit.Consumer;
 import au.com.dius.pact.provider.junit.Provider;
 import au.com.dius.pact.provider.junit.State;
+import au.com.dius.pact.provider.junit.loader.PactBroker;
 import au.com.dius.pact.provider.junit.loader.PactFolder;
 import au.com.dius.pact.provider.junit5.HttpTestTarget;
 import au.com.dius.pact.provider.junit5.PactVerificationContext;
@@ -24,18 +26,22 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import static org.mockito.Mockito.when;
 
 @Provider("Provider-Date-Validate")
-@PactFolder("pacts")
-@ExtendWith(SpringExtension.class)
+@Consumer("Consumer-Zodiac")
+//@PactFolder("pacts")
+@PactBroker(
+        host = "localhost",
+        port = "9292"
+        //consumerVersionSelectors = {@VersionSelector(tag = "dev"), @VersionSelector(tag = "master"), @VersionSelector(tag = "test")}
+        //authentication = @PactBrokerAuth(username = "pact_workshop", password = "pact_workshop")
+)
+//@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProviderDatePactTest {
 
-    private static ConfigurableWebApplicationContext application;
+    //private static ConfigurableWebApplicationContext application;
 
     @MockBean
    private DateValidatorService dateValidator;
-
-    @LocalServerPort
-    int port;
 
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
@@ -43,36 +49,21 @@ public class ProviderDatePactTest {
         context.verifyInteraction();
     }
 
-//    @BeforeAll
-//    public static void start() {
-//        application = (ConfigurableWebApplicationContext) SpringApplication.run(ProviderDateValidateApplication.class);
-//    }
+    @BeforeAll
+    static void enablePublishingPact() {
+        System.setProperty("pact.verifier.publishResults", "true");
+    }
 
     @BeforeEach
     void before(PactVerificationContext context) {
-        context.setTarget(new HttpTestTarget("localhost", port, "/date-validate"));
+        context.setTarget(new HttpTestTarget("localhost", 8080));
     }
 
     @State("valid date from provider")
     public void toValidState() {
-        when(dateValidator.validateDate("1996-10-09")).thenReturn(new DateResponse(1996, 10, 9, true ));
     }
 
     @State("Invalid date from provider")
     public void toInvalidState() { }
 
-//    @MockBean
-//    private DateValidatorService dateValidator;
-//
-//    @BeforeEach
-//    void setUp(PactVerificationContext context) {
-//        context.setTarget(new HttpTestTarget("localhost", port));
-//    }
-//
-//    @TestTemplate
-//    @ExtendWith(PactVerificationInvocationContextProvider.class)
-//    void verifyPact(PactVerificationContext context, HttpRequest request) {
-//        replaceAuthHeader(request);
-//        context.verifyInteraction();
-//    }
 }

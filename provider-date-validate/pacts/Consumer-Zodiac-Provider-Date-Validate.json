@@ -40,15 +40,15 @@
         }
       },
       "response": {
-        "status": 400,
+        "status": 200,
         "headers": {
           "Content-Type": "application/json; charset=UTF-8"
         },
         "body": {
-          "month": 34,
-          "year": 1000,
+          "month": 0,
+          "year": 0,
           "isValidDate": false,
-          "day": 45
+          "day": 0
         },
         "matchingRules": {
           "header": {

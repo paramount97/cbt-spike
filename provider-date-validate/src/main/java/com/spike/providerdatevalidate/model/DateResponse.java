@@ -12,4 +12,5 @@ public class DateResponse {
     private int month = 0;
     private int day = 0;
     private Boolean isValidDate = false;
+    private String AdditionalInfo = "";
 }
