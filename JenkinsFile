@@ -37,8 +37,9 @@ pipeline {
             steps {
                 script{
                     cleanWs()
-                    checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_SOURCE_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-github-enterprise', url: 'https://github.com/paramount97/cbt-spike.git']]])
-                    echo "Checking out branch '${scm.branches[0].name}'"
+                    git branch: 'main', url: 'https://github.com/paramount97/cbt-spike.git'
+                    //checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_SOURCE_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-github-enterprise', url: 'https://github.com/paramount97/cbt-spike.git']]])
+                    //echo "Checking out branch '${scm.branches[0].name}'"
                 }
             }
         }
