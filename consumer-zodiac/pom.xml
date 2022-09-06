@@ -68,16 +68,38 @@
                 <artifactId>maven</artifactId>
                 <version>4.1.11</version>
                 <configuration>
-                    <pactDirectory>target/pacts</pactDirectory> <!-- Defaults to ${project.build.directory}/pacts -->
-                    <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>
+<!--                    <pactDirectory>target/pacts</pactDirectory> &lt;!&ndash; Defaults to ${project.build.directory}/pacts &ndash;&gt;-->
+<!--                    <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
+                    <pactBrokerUrl>https://nbscop.pactflow.io</pactBrokerUrl>
+                    <pactBrokerToken>RoYnhMmcBDaNVBrZZqIN7Q</pactBrokerToken> <!-- Replace TOKEN with the actual token -->
+                    <pactBrokerAuthenticationScheme>Bearer</pactBrokerAuthenticationScheme>
                     <tags>
-                        <tag>main</tag>
+                        <tag>feature</tag>
                     </tags>
-                    <projectVersion></projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
+                    <projectVersion>1.0</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
                     <skipPactPublish></skipPactPublish> <!-- Defaults to false -->
                 </configuration>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>2.18</version>-->
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>org.junit.jupiter</groupId>-->
+<!--                        <artifactId>junit-jupiter-engine</artifactId>-->
+<!--                        <version>5.4.0</version>-->
+<!--                        <scope>test</scope>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+<!--                <configuration>-->
+<!--                    <systemPropertyVariables>-->
+<!--                        <pact.writer.overwrite>true</pact.writer.overwrite>-->
+<!--                    </systemPropertyVariables>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
         </plugins>
     </build>

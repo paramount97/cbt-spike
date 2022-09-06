@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.spike</groupId>
     <artifactId>provider-date-validate</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>provider-date-validate</name>
     <description>provider-date-validate</description>
     <properties>
@@ -66,15 +66,27 @@
                     <serviceProviders>
                         <!-- You can define as many as you need, but each must have a unique name -->
                         <serviceProvider>
-                            <name>Provider-Date-Validate</name>
+                            `<name>Provider-Date-Validate</name>
                             <!-- All the provider properties are optional, and have sensible defaults (shown below) -->
                             <protocol>http</protocol>
                             <host>localhost</host>
                             <port>8080</port>
                             <path>/</path>
-                            <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>
+<!--                            <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
+                            <pactBroker>
+                                <url>https://nbscop.pactflow.io</url>
+                                <authentication>
+                                    <scheme>bearer</scheme>
+                                    <token>RoYnhMmcBDaNVBrZZqIN7Q</token>
+                                </authentication>
+                            </pactBroker>
                         </serviceProvider>
                     </serviceProviders>
+                    <configuration>
+                        <pact.verifier.publishResults>true</pact.verifier.publishResults>
+                        <pact.provider.version>1.0</pact.provider.version>
+                        <pact.provider.branch>feature</pact.provider.branch>
+                    </configuration>
                 </configuration>
             </plugin>
         </plugins>

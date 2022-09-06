@@ -33,7 +33,7 @@ public class ZodiacService {
 
 
     public String getChineseZodiac(String birthDate) {
-        String uri = UriComponentsBuilder.fromHttpUrl("dateValidatorServiceURL")
+        String uri = UriComponentsBuilder.fromHttpUrl(dateValidatorServiceURL)
                 .path("date-validate")
                 .queryParam("Date", birthDate)
                 .toUriString();
