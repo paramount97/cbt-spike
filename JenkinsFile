@@ -16,62 +16,35 @@ pipeline {
                 name: 'GIT_SOURCE_BRANCH',
                 defaultValue: 'main',
                 description: 'Source Code Branch')
-//         string (
-//                 name: 'SERVICE_TO_BUILD',
-//                 defaultValue: 'consumer-zodiac',
-//                 description: 'This will be the path to your pom for building the project')
     }
 
-//     environment {
-//         M2_HOME = tool('NBS Maven')
-//         JAVA_HOME = tool('JDK1.11')
-//         PATH="${JAVA_HOME}/bin:${PATH}"
-//         NEXUS_CREDENTIALS=credentials('ARTIFACTORY_CREDENTIAL')
-//         NEXUS_USERNAME="${env.NEXUS_CREDENTIALS_USR}"
-//         NEXUS_PASS="${env.NEXUS_CREDENTIALS_PSW}"
-//
-//     }
+    environment {
+        M2_HOME = tool('NBS Maven')
+        JAVA_HOME = tool('JDK1.11')
+        PATH="${JAVA_HOME}/bin:${PATH}"
+    }
 
     stages {
-        stage('checkout'){
-            steps {
-                script{
-                    cleanWs()
-                    git branch: 'main', url: 'https://github.com/paramount97/cbt-spike.git'
-                    //checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_SOURCE_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-github-enterprise', url: 'https://github.com/paramount97/cbt-spike.git']]])
-                    //echo "Checking out branch '${scm.branches[0].name}'"
-                }
-            }
-        }
-
-//         stage('Preparation') {
+//         stage('checkout'){
 //             steps {
-//                 script {
-//                     env.GIT_SOURCE_URL = 'https://github.com/nationwide-ccoe/nbs-cop-devtest.git'
-//                     env.mvnToolHome = tool('NBS Maven')
-//                     if ( GIT_SOURCE_BRANCH =~ "feature/*")
-//                     {
-//
-//                         print "You made a good choice selecting your branch: ${GIT_SOURCE_BRANCH}, I will proceed now"
-//
-//                     }
-//                     else
-//                     {
-//                         if ( GIT_SOURCE_BRANCH =~ "develop")
-//                         {
-//                             print "Good choice selecting develop branch, I will proceed now"
-//                         }
-//                         else
-//                         {
-//                             print " Choose branch(Develop or Release) to build the JAR to deploy in Nexus, Sorry cant proceed "
-//                             //System.exit(1)
-//                             error "exiting......"
-//                         }
-//                     }
+//                 script{
+//                     cleanWs()
+//                     git branch: 'main', url: 'https://github.com/paramount97/cbt-spike.git'
+//                     //checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_SOURCE_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-github-enterprise', url: 'https://github.com/paramount97/cbt-spike.git']]])
+//                     //echo "Checking out branch '${scm.branches[0].name}'"
 //                 }
-//
 //             }
 //         }
+
+        stage('Preparation') {
+            steps {
+                script {
+                    env.GIT_SOURCE_URL = 'https://github.com/nationwide-ccoe/nbs-cop-devtest.git'
+                    env.mvnToolHome = tool('NBS Maven')
+                }
+
+            }
+        }
 
 
         stage('Build-Deploy'){
