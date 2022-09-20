@@ -1,5 +1,8 @@
 package com.spike.consumerzodiac.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.spike.consumerzodiac.service.ZodiacService;
 
 import org.springframework.http.ResponseEntity;
@@ -22,7 +25,7 @@ public class ZodiacController {
         if (sign != null) {
             return ResponseEntity.ok().body(sign);
         } else {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(new HashMap<>(){{put("status","400");put("Message","Your input is invalid");}});
         }
     }
 

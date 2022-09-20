@@ -47,6 +47,19 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.1</version>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+<!--                    <systemPropertyVariables>-->
+<!--                        <pact.verifier.publishResults>true</pact.verifier.publishResults>-->
+<!--                        <pact.provider.version>d67s4h</pact.provider.version>-->
+<!--                        <pact.provider.branch>main</pact.provider.branch>-->
+<!--                    </systemPropertyVariables>-->
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -58,37 +71,43 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>au.com.dius.pact.provider</groupId>
-                <artifactId>maven</artifactId>
-                <version>4.1.11</version>
-                <configuration>
-                    <serviceProviders>
-                        <!-- You can define as many as you need, but each must have a unique name -->
-                        <serviceProvider>
-                            `<name>Provider-Date-Validate</name>
-                            <!-- All the provider properties are optional, and have sensible defaults (shown below) -->
-                            <protocol>http</protocol>
-                            <host>localhost</host>
-                            <port>8080</port>
-                            <path>/</path>
-<!--                            <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
-                            <pactBroker>
-                                <url>https://nbscop.pactflow.io</url>
-                                <authentication>
-                                    <scheme>bearer</scheme>
-                                    <token>RoYnhMmcBDaNVBrZZqIN7Q</token>
-                                </authentication>
-                            </pactBroker>
-                        </serviceProvider>
-                    </serviceProviders>
-                    <configuration>
-                        <pact.verifier.publishResults>true</pact.verifier.publishResults>
-                        <pact.provider.version>1.0</pact.provider.version>
-                        <pact.provider.branch>feature</pact.provider.branch>
-                    </configuration>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>au.com.dius.pact.provider</groupId>-->
+<!--                <artifactId>maven</artifactId>-->
+<!--                <version>4.1.11</version>-->
+<!--                <configuration>-->
+<!--                    <serviceProviders>-->
+<!--                        &lt;!&ndash; You can define as many as you need, but each must have a unique name &ndash;&gt;-->
+<!--                        <serviceProvider>-->
+<!--                            `<name>Provider-Date-Validate</name>-->
+<!--                            &lt;!&ndash; All the provider properties are optional, and have sensible defaults (shown below) &ndash;&gt;-->
+<!--                            <protocol>http</protocol>-->
+<!--                            <host>localhost</host>-->
+<!--                            <port>8080</port>-->
+<!--                            <path>/</path>-->
+<!--&lt;!&ndash;                            <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>&ndash;&gt;-->
+<!--                            <pactBroker>-->
+<!--                                <url>https://nbscop.pactflow.io</url>-->
+<!--                                <authentication>-->
+<!--                                    <scheme>bearer</scheme>-->
+<!--                                    <token>RoYnhMmcBDaNVBrZZqIN7Q</token>-->
+<!--                                </authentication>-->
+<!--                            </pactBroker>-->
+<!--                        </serviceProvider>-->
+<!--                    </serviceProviders>-->
+<!--                    <configuration>-->
+<!--                        <pact.verifier.publishResults>true</pact.verifier.publishResults>-->
+<!--&lt;!&ndash;                        <pact.provider.version>ds5569f</pact.provider.version>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <pact.provider.branch>main</pact.provider.branch>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <branch>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <name>main</name>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </branch>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <tagName>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <name>DCOP-4161</name>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </tagName>&ndash;&gt;-->
+<!--                    </configuration>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

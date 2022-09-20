@@ -34,17 +34,15 @@ import static org.mockito.Mockito.when;
         //port = "9292"
         scheme = "https",
         host = "nbscop.pactflow.io/",
+        //tags = {"main", "ds4550f"},
         //consumerVersionSelectors = {@VersionSelector(tag = "dev"), @VersionSelector(tag = "master"), @VersionSelector(tag = "test")}
-        authentication = @PactBrokerAuth(scheme ="bearer", username= "RoYnhMmcBDaNVBrZZqIN7Q", password = "Nationwide")
+        authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
+        //authentication = @PactBrokerAuth(scheme ="bearer", username= "RoYnhMmcBDaNVBrZZqIN7Q", password = "Nationwide")
 )
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProviderDatePactTest {
 
-    //private static ConfigurableWebApplicationContext application;
-
-//    @MockBean
-//   private DateValidatorService dateValidator;
 
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
@@ -55,9 +53,9 @@ public class ProviderDatePactTest {
     @BeforeAll
     static void enablePublishingPact() {
         System.setProperty("pact.verifier.publishResults", "true");
-        System.setProperty("pact.provider.version", "0.1");
-        System.setProperty("pact.provider.tag", "main");
-        System.setProperty("pact.provider.tag", "Test");
+        System.setProperty("pact.provider.version", "ds495h");
+        System.setProperty("pact.provider.providerBranch", "main");
+        //System.setProperty("pact.provider.tag", "dcop-3161");
     }
 
     @BeforeEach

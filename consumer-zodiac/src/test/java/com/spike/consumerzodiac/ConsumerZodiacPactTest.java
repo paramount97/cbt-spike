@@ -3,6 +3,7 @@ package com.spike.consumerzodiac;
 import java.io.IOException;
 
 import au.com.dius.pact.consumer.MockServer;
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -12,6 +13,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -20,6 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(PactConsumerTestExt.class)
 public class ConsumerZodiacPactTest {
 
+    @BeforeAll
+    static void pactProperties() {
+       // System.setProperty("pact.writer.overwrite", "true");
+//        System.setProperty("pact.verifier.publishResults", "true");
+//        System.setProperty("pact.provider.version", "1.3");
+//        System.setProperty("pact.provider.tag", "main");
+//        System.setProperty("pact.provider.tag", "Test");
+    }
+
     @Pact(consumer = "Consumer-Zodiac", provider = "Provider-Date-Validate")
     RequestResponsePact getValidDate(PactDslWithProvider builder) {
         JSONObject jo = new JSONObject();
@@ -27,14 +38,19 @@ public class ConsumerZodiacPactTest {
         jo.put("month", 04);
         jo.put("day", 25);
         jo.put("isValidDate", true);
-        return builder.given("User sends valid date")
+        return builder
+                .given("User sends valid date")
                 .uponReceiving("Provider should return date as valid")
-                .method("GET")
-                .path("/date-validate")
-                .queryMatchingDate("Date", "1994-04-25" )
+                    .method("GET")
+                    .path("/date-validate")
+                    .queryMatchingDate("Date", "1994-04-25" )
                 .willRespondWith()
-                .status(200)
-                .body(jo)
+                    .status(200)
+                    .body(new PactDslJsonBody()
+                            .integerType("year", 1994)
+                            .integerType("month", 04)
+                            .integerType("day", 25)
+                            .booleanType("isValidDate", true))
                 .toPact();
     }
 
@@ -45,14 +61,19 @@ public class ConsumerZodiacPactTest {
         jo.put("month", 0);
         jo.put("day", 0);
         jo.put("isValidDate", false);
-        return builder.given("User sends invalid date")
+        return builder
+                .given("User sends invalid date")
                 .uponReceiving("Provider should return date as invalid")
-                .method("GET")
-                .path("/date-validate")
-                .queryMatchingDate("Date", "1000-34-45" )
+                    .method("GET")
+                    .path("/date-validate")
+                    .queryMatchingDate("Date", "1000-34-45" )
                 .willRespondWith()
-                .status(200)
-                .body(jo)
+                    .status(200)
+                    .body(new PactDslJsonBody()
+                            .integerType("year", 0)
+                            .integerType("month", 0)
+                            .integerType("day", 0)
+                            .booleanType("isValidDate", false))
                 .toPact();
     }
 

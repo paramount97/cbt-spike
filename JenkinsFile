@@ -25,16 +25,6 @@ pipeline {
     }
 
     stages {
-//         stage('checkout'){
-//             steps {
-//                 script{
-//                     cleanWs()
-//                     git branch: 'main', url: 'https://github.com/paramount97/cbt-spike.git'
-//                     //checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_SOURCE_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-github-enterprise', url: 'https://github.com/paramount97/cbt-spike.git']]])
-//                     //echo "Checking out branch '${scm.branches[0].name}'"
-//                 }
-//             }
-//         }
 
         stage('Preparation') {
             steps {
@@ -45,7 +35,6 @@ pipeline {
 
             }
         }
-
 
         stage('Build-Deploy'){
             steps{
@@ -61,4 +50,7 @@ pipeline {
 def utilities_deploy(String service_name) {
     env.service_name = service_name
     sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+    sh "${mvnToolHome}/bin/mvn spring-boot:run"
+    sh "${mvnToolHome}/bin/mvn pact:verify"
+    sh "${mvnToolHome}/bin/mvn spring-boot:stop"
 }
