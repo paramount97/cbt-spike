@@ -13,7 +13,6 @@ import com.jayway.jsonpath.JsonPath;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -22,22 +21,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(PactConsumerTestExt.class)
 public class ConsumerZodiacPactTest {
 
-    @BeforeAll
-    static void pactProperties() {
-       // System.setProperty("pact.writer.overwrite", "true");
-//        System.setProperty("pact.verifier.publishResults", "true");
-//        System.setProperty("pact.provider.version", "1.3");
-//        System.setProperty("pact.provider.tag", "main");
-//        System.setProperty("pact.provider.tag", "Test");
-    }
 
     @Pact(consumer = "Consumer-Zodiac", provider = "Provider-Date-Validate")
     RequestResponsePact getValidDate(PactDslWithProvider builder) {
-        JSONObject jo = new JSONObject();
-        jo.put("year", 1994);
-        jo.put("month", 04);
-        jo.put("day", 25);
-        jo.put("isValidDate", true);
+        JSONObject absResponse = new JSONObject();
+        absResponse.put("year", 1994);
+        absResponse.put("month", 04);
+        absResponse.put("day", 25);
+        absResponse.put("isValidDate", true);
+
+        PactDslJsonBody typeResponse = new PactDslJsonBody();
+        typeResponse.integerType("year", 1994);
+        typeResponse.integerType("month", 04);
+        typeResponse.integerType("day", 25);
+        typeResponse.booleanType("isValidDate", true);
+
         return builder
                 .given("User sends valid date")
                 .uponReceiving("Provider should return date as valid")
@@ -46,21 +44,24 @@ public class ConsumerZodiacPactTest {
                     .queryMatchingDate("Date", "1994-04-25" )
                 .willRespondWith()
                     .status(200)
-                    .body(new PactDslJsonBody()
-                            .integerType("year", 1994)
-                            .integerType("month", 04)
-                            .integerType("day", 25)
-                            .booleanType("isValidDate", true))
+                    .body(absResponse)
                 .toPact();
     }
 
     @Pact(consumer = "Consumer-Zodiac", provider = "Provider-Date-Validate")
     RequestResponsePact getInvalidDate(PactDslWithProvider builder) {
-        JSONObject jo = new JSONObject();
-        jo.put("year", 0);
-        jo.put("month", 0);
-        jo.put("day", 0);
-        jo.put("isValidDate", false);
+        JSONObject absResponse = new JSONObject();
+        absResponse.put("year", 0);
+        absResponse.put("month", 0);
+        absResponse.put("day", 0);
+        absResponse.put("isValidDate", false);
+
+        PactDslJsonBody typeResponse = new PactDslJsonBody();
+        typeResponse.integerType("year", 0);
+        typeResponse.integerType("month", 0);
+        typeResponse.integerType("day", 0);
+        typeResponse.booleanType("isValidDate", false);
+
         return builder
                 .given("User sends invalid date")
                 .uponReceiving("Provider should return date as invalid")
@@ -69,11 +70,7 @@ public class ConsumerZodiacPactTest {
                     .queryMatchingDate("Date", "1000-34-45" )
                 .willRespondWith()
                     .status(200)
-                    .body(new PactDslJsonBody()
-                            .integerType("year", 0)
-                            .integerType("month", 0)
-                            .integerType("day", 0)
-                            .booleanType("isValidDate", false))
+                    .body(absResponse)
                 .toPact();
     }
 
@@ -83,8 +80,6 @@ public class ConsumerZodiacPactTest {
     void Should_Return_True_When_Valid_Date_Provided(MockServer mockServer)  throws IOException {
         HttpResponse httpResponse = Request.Get(mockServer.getUrl() + "/date-validate?Date=1994-04-25")
                 .execute().returnResponse();
-
-        String response = httpResponse.getEntity().getContent().toString();
 
         assertThat(httpResponse.getStatusLine().getStatusCode()).isEqualTo(200);
         assertThat(JsonPath.read(httpResponse.getEntity().getContent(), "$.isValidDate").toString()).isEqualTo("true");
