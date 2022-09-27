@@ -15,6 +15,7 @@
     <description>consumer-zodiac</description>
     <properties>
         <java.version>11</java.version>
+        <git.properties>${project.basedir}/src/main/resources/git.properties</git.properties>
     </properties>
     <dependencies>
         <dependency>
@@ -47,6 +48,21 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.git-commit-id</groupId>
+            <artifactId>git-commit-id-maven-plugin</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -63,13 +79,82 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>5.0.0</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+<!--                    <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>-->
+                    <verbose>false</verbose>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>${project.basedir}/src/main/resources/git.properties
+                    </generateGitPropertiesFilename>
+                    <commitIdGenerationMode>full</commitIdGenerationMode>
+                    <includeOnlyProperties>
+                        <includeOnlyProperty>git.commit.id.abbrev</includeOnlyProperty>
+                        <includeOnlyProperty>git.commit.message.short</includeOnlyProperty>
+                        <includeOnlyProperty>git.commit.time</includeOnlyProperty>
+                    </includeOnlyProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${git.properties}</file>
+<!--                                <file>${project.basedir}/src/main/resources/application.properties</file>-->
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>antrun-plugin</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="commit id - ${git.commit.id.abbrev}"/>
+                                <echo>commit id - "${git.commit.id.abbrev}"</echo>
+                                <echo>commit id - "${project.basedir}"</echo>
+<!--                                <echo>commit id - "${server.port}"</echo>-->
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>au.com.dius.pact.provider</groupId>
                 <artifactId>maven</artifactId>
                 <version>4.1.11</version>
                 <configuration>
-                  <pactDirectory></pactDirectory><!-->Defaults to ${project.build.directory}/pacts &ndash;&gt;-->
-<!--                    <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
+                    <pactDirectory></pactDirectory><!-->Defaults to ${project.build.directory}/pacts &ndash;&gt;-->
+                    <!--                    <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
                     <pactBrokerUrl>https://nbscop.pactflow.io</pactBrokerUrl>
                     <pactBrokerToken>RoYnhMmcBDaNVBrZZqIN7Q</pactBrokerToken> <!-- Replace TOKEN with the actual token -->
                     <pactBrokerAuthenticationScheme>Bearer</pactBrokerAuthenticationScheme>
@@ -77,12 +162,11 @@
                         <tag>main</tag>
                         <tag>DCOP-3161</tag>
                     </tags>
-                    <projectVersion>w225o6</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
+                    <projectVersion>${git.commit.id.abbrev}</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
                     <skipPactPublish></skipPactPublish> <!-- Defaults to false -->
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
