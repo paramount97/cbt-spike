@@ -50,7 +50,7 @@ pipeline {
 def utilities_deploy(String service_name) {
     env.service_name = service_name
     sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
-    sh "${mvnToolHome}/bin/mvn spring-boot:run"
-    sh "${mvnToolHome}/bin/mvn pact:verify"
-    sh "${mvnToolHome}/bin/mvn spring-boot:stop"
+//     sh "${mvnToolHome}/bin/mvn spring-boot:run"
+//     sh "${mvnToolHome}/bin/mvn pact:verify"
+//     sh "${mvnToolHome}/bin/mvn spring-boot:stop"
 }

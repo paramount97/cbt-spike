@@ -164,7 +164,6 @@
                     <tags>
                         <tag>main</tag>
                         <tag>DCOP-3161</tag>
-                        <tag>${git.commit.id}</tag>
                     </tags>
                     <projectVersion>${git.commit.id}</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
