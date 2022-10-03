@@ -16,6 +16,8 @@
     <properties>
         <java.version>11</java.version>
         <git.properties>${project.basedir}/src/main/resources/git.properties</git.properties>
+        <git.commit.id>${git.commit.message.short}</git.commit.id>
+
     </properties>
     <dependencies>
         <dependency>
@@ -104,6 +106,7 @@
                         <includeOnlyProperty>git.commit.id.abbrev</includeOnlyProperty>
                         <includeOnlyProperty>git.commit.message.short</includeOnlyProperty>
                         <includeOnlyProperty>git.commit.time</includeOnlyProperty>
+                        <includeOnlyProperty>git.branch</includeOnlyProperty>
                     </includeOnlyProperties>
                 </configuration>
             </plugin>
@@ -154,15 +157,16 @@
                 <version>4.1.11</version>
                 <configuration>
                     <pactDirectory></pactDirectory><!-->Defaults to ${project.build.directory}/pacts &ndash;&gt;-->
-                    <!--                    <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
-                    <pactBrokerUrl>https://nbscop.pactflow.io</pactBrokerUrl>
-                    <pactBrokerToken>RoYnhMmcBDaNVBrZZqIN7Q</pactBrokerToken> <!-- Replace TOKEN with the actual token -->
-                    <pactBrokerAuthenticationScheme>Bearer</pactBrokerAuthenticationScheme>
+                     <pactBrokerUrl>http://10.164.13.41:9292/</pactBrokerUrl>
+<!--                    <pactBrokerUrl>https://nbscop.pactflow.io</pactBrokerUrl>-->
+<!--                    <pactBrokerToken>RoYnhMmcBDaNVBrZZqIN7Q</pactBrokerToken> &lt;!&ndash; Replace TOKEN with the actual token &ndash;&gt;-->
+<!--                    <pactBrokerAuthenticationScheme>Bearer</pactBrokerAuthenticationScheme>-->
                     <tags>
                         <tag>main</tag>
                         <tag>DCOP-3161</tag>
+                        <tag>${git.commit.id}</tag>
                     </tags>
-                    <projectVersion>${git.commit.id.abbrev}</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
+                    <projectVersion>${git.commit.id}</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
                     <skipPactPublish></skipPactPublish> <!-- Defaults to false -->
                 </configuration>

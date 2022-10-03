@@ -21,8 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Consumer("Consumer-Zodiac")
 //@PactFolder("pacts")
 @PactBroker(
-        //url = "http://localhost:9292/"-----------DOCKERIZED PACT BROKER
-        url = "https://nbscop.pactflow.io/",
+        url = "http://10.164.13.41:9292/",
+//        url = "https://nbscop.pactflow.io/",
         providerBranch = "main",
         enablePendingPacts = "true",
         authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
@@ -43,7 +43,7 @@ public class ProviderDatePactTest {
         System.setProperty("pact.verifier.publishResults", "true");
         System.setProperty("pact.provider.version", "yf495h");
         System.setProperty("pact.provider.branch", "main");
-        System.setProperty("pact.provider.tag", "test");
+//        System.setProperty("pact.provider.tag", "test");
     }
 
     @BeforeEach
