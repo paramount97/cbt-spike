@@ -16,6 +16,10 @@ pipeline {
                 name: 'GIT_SOURCE_BRANCH',
                 defaultValue: 'main',
                 description: 'Source Code Branch')
+        string (
+                name: 'SERVICE_TO_BUILD',
+                choices: ['consumer-zodiac', 'provider-date-validate']
+                description: 'This will be the path to your pom for building the project')
     }
 
     environment {
@@ -29,8 +33,12 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
-                    env.GIT_SOURCE_URL = 'https://github.com/nationwide-ccoe/nbs-cop-devtest.git'
+                    cleanWs()
+                    checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_SOURCE_BRANCH}"]], userRemoteConfigs: [[url: 'https://github.com/paramount97/cbt-spike.git']]])
+                    //env.GIT_SOURCE_URL = 'https://github.com/nationwide-ccoe/nbs-cop-devtest.git'
+                    echo "Checking out branch '${scm.branches[0].name}'"
                     env.mvnToolHome = tool('NBS Maven')
+
                 }
 
             }
@@ -39,7 +47,7 @@ pipeline {
         stage('Build-Deploy'){
             steps{
                 script{
-                    utilities_deploy("consumer-zodiac")
+                    utilities_deploy("SERVICE_TO_BUILD")
                 }
             }
         }
@@ -49,8 +57,11 @@ pipeline {
 
 def utilities_deploy(String service_name) {
     env.service_name = service_name
-    sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
-//     sh "${mvnToolHome}/bin/mvn spring-boot:run"
-//     sh "${mvnToolHome}/bin/mvn pact:verify"
-//     sh "${mvnToolHome}/bin/mvn spring-boot:stop"
+    if (${service_name} == "consumer-zodiac") {
+        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+    } else {
+        sh "${mvnToolHome}/bin/mvn spring-boot:run"
+        sh "${mvnToolHome}/bin/mvn -DTest="ProviderDatePactTest""
+        sh "${mvnToolHome}/bin/mvn spring-boot:stop"
+    }
 }
