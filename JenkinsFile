@@ -57,7 +57,7 @@ pipeline {
 
 def utilities_deploy(String service_name) {
     env.service_name = service_name
-    if (${service_name} == "consumer-zodiac") {
+    if (service_name == "consumer-zodiac") {
         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
     } else {
         sh "${mvnToolHome}/bin/mvn spring-boot:run"
