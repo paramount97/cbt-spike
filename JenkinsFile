@@ -55,13 +55,14 @@ pipeline {
 }
 
 
-def utilities_deploy(String service_name) {
-    env.service_name = service_name
+def utilities_deploy(String service_names) {
+    env.service_name = service_names
+    echo "MS to run is '${service_names}'"
     if (service_name == "consumer-zodiac") {
         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
     } else {
-        sh "${mvnToolHome}/bin/mvn spring-boot:run"
-        sh "${mvnToolHome}/bin/mvn -DTest="ProviderDatePactTest""
-        sh "${mvnToolHome}/bin/mvn spring-boot:stop"
+        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
+        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest="ProviderDatePactTest""
+        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:stop"
     }
 }
