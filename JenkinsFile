@@ -16,7 +16,7 @@ pipeline {
                 name: 'GIT_SOURCE_BRANCH',
                 defaultValue: 'main',
                 description: 'Source Code Branch')
-        string (
+        choice (
                 name: 'SERVICE_TO_BUILD',
                 choices: ['consumer-zodiac', 'provider-date-validate'],
                 description: 'This will be the path to your pom for building the project')
