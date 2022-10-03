@@ -18,7 +18,7 @@ pipeline {
                 description: 'Source Code Branch')
         string (
                 name: 'SERVICE_TO_BUILD',
-                choices: ['consumer-zodiac', 'provider-date-validate']
+                choices: ['consumer-zodiac', 'provider-date-validate'],
                 description: 'This will be the path to your pom for building the project')
     }
 
