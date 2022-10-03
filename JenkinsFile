@@ -47,7 +47,7 @@ pipeline {
         stage('Build-Deploy'){
             steps{
                 script{
-                    utilities_deploy("SERVICE_TO_BUILD")
+                    utilities_deploy(SERVICE_TO_BUILD)
                 }
             }
         }
