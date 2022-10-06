@@ -48,7 +48,7 @@ public class ProviderDatePactTest {
 
     @BeforeEach
     void before(PactVerificationContext context) {
-        context.setTarget(new HttpTestTarget("localhost", 8080));
+        context.setTarget(new HttpTestTarget("localhost", 8083));
     }
 
     @State("User sends valid date")
