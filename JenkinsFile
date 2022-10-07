@@ -74,9 +74,9 @@ pipeline {
                 }
                 stage('Run pact test'){
                     steps{
-                        sh "sleep 5"
+                        sh "sleep 10"
                         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest=ProviderDatePactTest"
-                        sh "sleep 3"
+                        sh "sleep 5"
                         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:stop"
                     }
                 }
