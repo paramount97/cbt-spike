@@ -58,6 +58,7 @@ pipeline {
 //                 } else {
 //                     utilities_deploy(SERVICE_TO_BUILD)
 //                 }
+                }
             }
         }
 
