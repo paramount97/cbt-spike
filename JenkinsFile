@@ -38,16 +38,46 @@ pipeline {
                     //env.GIT_SOURCE_URL = 'https://github.com/nationwide-ccoe/nbs-cop-devtest.git'
                     echo "Checking out branch '${scm.branches[0].name}'"
                     env.mvnToolHome = tool('NBS Maven')
+                    env.service_name = SERVICE_TO_BUILD
 
                 }
 
             }
         }
 
-        stage('Build-Deploy'){
+        stage('Pact-publish'){
+            when {
+                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
+            }
             steps{
                 script{
-                    utilities_deploy(SERVICE_TO_BUILD)
+//                 env.service_name = SERVICE_TO_BUILD
+//                 echo "SERVICE_TO_BUILD: '${SERVICE_TO_BUILD}'"
+//                 if (service_name == "consumer-zodiac"){
+                    sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+//                 } else {
+//                     utilities_deploy(SERVICE_TO_BUILD)
+//                 }
+            }
+        }
+
+        stage('Pact-verify'){
+            when{
+                expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
+            }
+            parallel{
+                stage('Build and run a provider application'){
+                    steps{
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
+                    }
+                }
+                stage('Run pact test'){
+                    steps{
+                        sh "sleep 5"
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest="ProviderDatePactTest""
+                        sh "sleep 3"
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:stop"
+                    }
                 }
             }
         }
@@ -55,16 +85,16 @@ pipeline {
 }
 
 
-def utilities_deploy(String service_names) {
-    env.service_name = service_names
-    echo "MS to run is '${service_names}'"
-    if (service_name == "consumer-zodiac") {
-        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
-    } else {
-        sh '''${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run  && \
-             sleep 10  && \
-             ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest="ProviderDatePactTest"  && \
-             sleep 5 && \
-             ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:stop'''
-    }
-}
+// def utilities_deploy(String service_names) {
+//     env.service_name = service_names
+//     echo "MS to run is '${service_names}'"
+//     if (service_name == "consumer-zodiac") {
+//         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+//     } else {
+//         sh '''${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run  && \
+//              sleep 10  && \
+//              ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest="ProviderDatePactTest"  && \
+//              sleep 5 && \
+//              ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:stop'''
+//     }
+// }
