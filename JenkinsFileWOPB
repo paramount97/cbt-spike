@@ -83,11 +83,11 @@ pipeline {
             }
         }
 
-        post {
-            stage('Uploading pact into S3'){
-                when {
-                    expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
-                }
+        stage('Uploading pact into S3'){
+            when {
+                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
+            }
+            post{
                 script {
                     sh "sudo rm -rf /tmp/ocp/virtual_environment/$ENV_NAME"
                     withAWS(region: 'eu-west-2') {
@@ -106,5 +106,6 @@ pipeline {
                 }
             }
         }
+
     }
 }
