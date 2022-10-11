@@ -87,7 +87,6 @@ pipeline {
             when {
                 expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
             }
-            post{
                 script {
                     sh "sudo rm -rf /tmp/ocp/virtual_environment/$ENV_NAME"
                     withAWS(region: 'eu-west-2') {
@@ -104,7 +103,6 @@ pipeline {
                         env.AWS_SESSION_TOKEN = ""
                     }
                 }
-            }
         }
 
     }
