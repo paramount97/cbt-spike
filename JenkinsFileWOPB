@@ -1,22 +1,22 @@
 #!groovy
 pipeline {
-    agent { label "${CHOOSE_NODE}"}
+    agent { label "${CHOOSE_NODE}" }
 
     tools {
-          	maven 'NBS Maven'
-          	jdk 'JDK1.11'
-        }
+        maven 'NBS Maven'
+        jdk 'JDK1.11'
+    }
 
-    parameters{
-        choice (
+    parameters {
+        choice(
                 name: 'CHOOSE_NODE',
-                choices: ['ansible-server2', 'ansible-server', 'ansible-server3',  'ansible-caas-test'],
+                choices: ['ansible-server2', 'ansible-server', 'ansible-server3', 'ansible-caas-test'],
                 description: 'Executor to run the build on')
-        string (
+        string(
                 name: 'GIT_SOURCE_BRANCH',
                 defaultValue: 'main',
                 description: 'Source Code Branch')
-        choice (
+        choice(
                 name: 'SERVICE_TO_BUILD',
                 choices: ['consumer-zodiac', 'provider-date-validate'],
                 description: 'This will be the path to your pom for building the project')
@@ -25,7 +25,7 @@ pipeline {
     environment {
         M2_HOME = tool('NBS Maven')
         JAVA_HOME = tool('JDK1.11')
-        PATH="${JAVA_HOME}/bin:${PATH}"
+        PATH = "${JAVA_HOME}/bin:${PATH}"
     }
 
     stages {
@@ -38,53 +38,72 @@ pipeline {
                     //env.GIT_SOURCE_URL = 'https://github.com/nationwide-ccoe/nbs-cop-devtest.git'
                     echo "Checking out branch '${scm.branches[0].name}'"
                     env.mvnToolHome = tool('NBS Maven')
+                    env.service_name = SERVICE_TO_BUILD
 
                 }
 
             }
         }
 
-        stage('Build-Deploy'){
-            steps{
-                script{
-                    utilities_deploy(SERVICE_TO_BUILD)
+        stage('Pact-publish') {
+            when {
+                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
+            }
+            steps {
+                script {
+//                 env.service_name = SERVICE_TO_BUILD
+//                 echo "SERVICE_TO_BUILD: '${SERVICE_TO_BUILD}'"
+//                 if (service_name == "consumer-zodiac"){
+                    sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+//                 } else {
+//                     utilities_deploy(SERVICE_TO_BUILD)
+//                 }
+                }
+            }
+        }
+
+        stage('Pact-verify') {
+            when {
+                expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
+            }
+            parallel {
+                stage('Build and run a provider application') {
+                    steps {
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
+                    }
+                }
+                stage('Run pact test') {
+                    steps {
+                        sh "sleep 10"
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest=ProviderDatePactTest"
+                        sh "sleep 5"
+                        sh "curl -X POST localhost:8083/actuator/shutdown"
+                    }
                 }
             }
         }
 
         post {
-                always{
-                    script{
-                        sh "sudo rm -rf /tmp/ocp/virtual_environment/$ENV_NAME"
-                        withAWS(region:'eu-west-2') {
-                            INIT_ROLE_DETAILS = assume_role(
-                              AWS_ACCOUNT_NAME: "$AWS_ACCOUNT_NAME"
-                            )
-                            def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
-                            env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
-                            env.AWS_SECRET_ACCESS_KEY= ROLE_DETAILS[1].trim()
-                            env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
-                            s3Upload(bucket:"nbs-cop-dev-eu-west-1-sit-testharness", path:"CoP-Dev/${BUILD_NUMBER}/", includePathPattern:'**/output*.xml', workingDir:'')
-                            env.AWS_ACCESS_KEY_ID = ""
-                            env.AWS_SECRET_ACCESS_KEY = ""
-                            env.AWS_SESSION_TOKEN = ""
-                        }
-                    }
+            when {
+                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
+            }
+            script {
+                sh "sudo rm -rf /tmp/ocp/virtual_environment/$ENV_NAME"
+                withAWS(region: 'eu-west-2') {
+                    INIT_ROLE_DETAILS = assume_role(
+                            AWS_ACCOUNT_NAME: "$AWS_ACCOUNT_NAME"
+                    )
+                    def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
+                    env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
+                    env.AWS_SECRET_ACCESS_KEY = ROLE_DETAILS[1].trim()
+                    env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
+                    s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "${service_name}/target/pacts/*.json", workingDir: '')
+                    env.AWS_ACCESS_KEY_ID = ""
+                    env.AWS_SECRET_ACCESS_KEY = ""
+                    env.AWS_SESSION_TOKEN = ""
                 }
-    }
-}
+            }
 
-
-def utilities_deploy(String service_names) {
-    env.service_name = service_names
-    echo "MS to run is '${service_names}'"
-    if (service_name == "consumer-zodiac") {
-        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
-    } else {
-        sh '''${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run  && \
-             sleep 10  && \
-             ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest="ProviderDatePactTest"  && \
-             sleep 5 && \
-             ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:stop'''
+        }
     }
 }
