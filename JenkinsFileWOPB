@@ -87,23 +87,24 @@ pipeline {
             when {
                 expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
             }
-            script {
-                sh "sudo rm -rf /tmp/ocp/virtual_environment/$ENV_NAME"
-                withAWS(region: 'eu-west-2') {
-                    INIT_ROLE_DETAILS = assume_role(
-                            AWS_ACCOUNT_NAME: "$AWS_ACCOUNT_NAME"
-                    )
-                    def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
-                    env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
-                    env.AWS_SECRET_ACCESS_KEY = ROLE_DETAILS[1].trim()
-                    env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
-                    s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "${service_name}/target/pacts/*.json", workingDir: '')
-                    env.AWS_ACCESS_KEY_ID = ""
-                    env.AWS_SECRET_ACCESS_KEY = ""
-                    env.AWS_SESSION_TOKEN = ""
+            stage('Uploading pact into S3'){
+                script {
+                    sh "sudo rm -rf /tmp/ocp/virtual_environment/$ENV_NAME"
+                    withAWS(region: 'eu-west-2') {
+                        INIT_ROLE_DETAILS = assume_role(
+                                AWS_ACCOUNT_NAME: "$AWS_ACCOUNT_NAME"
+                        )
+                        def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
+                        env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
+                        env.AWS_SECRET_ACCESS_KEY = ROLE_DETAILS[1].trim()
+                        env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
+                        s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "${service_name}/target/pacts/*.json", workingDir: '')
+                        env.AWS_ACCESS_KEY_ID = ""
+                        env.AWS_SECRET_ACCESS_KEY = ""
+                        env.AWS_SESSION_TOKEN = ""
+                    }
                 }
             }
-
         }
     }
 }
