@@ -26,6 +26,8 @@ pipeline {
         M2_HOME = tool('NBS Maven')
         JAVA_HOME = tool('JDK1.11')
         PATH = "${JAVA_HOME}/bin:${PATH}"
+        ARTIFACTORY_USERNAME = "openbanking-ci"
+        ARTIFACTORY_USERNAME = "Xd6uUZLwqhmqEfyW"
     }
 
     stages {
@@ -83,29 +85,60 @@ pipeline {
             }
         }
 
+        stage('Uploading pact into artifactory'){
+            when {
+                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
+            }
+            steps {
+                script{
+                    move_contract_to_artifactory()
+                }
+            }
+        }
+
         stage('Uploading pact into S3'){
             when {
                 expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
             }
                 steps {
                     script{
-                        //sh "sudo rm -rf /tmp/ocp/virtual_environment/$ENV_NAME"
-                        withAWS(region: 'eu-west-2') {
-                            INIT_ROLE_DETAILS = assume_role(
-                                    AWS_ACCOUNT_NAME: "nbs-cop-dev"
-                            )
-                            def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
-                            env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
-                            env.AWS_SECRET_ACCESS_KEY = ROLE_DETAILS[1].trim()
-                            env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
-                            s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "${service_name}/target/pacts/*.json", workingDir: '')
-                            env.AWS_ACCESS_KEY_ID = ""
-                            env.AWS_SECRET_ACCESS_KEY = ""
-                            env.AWS_SESSION_TOKEN = ""
+                        OUT=$(aws sts assume-role --role-arn arn:aws:iam::329364001920:role/nbs-cop-dev-role-spoke-cicd --role-session-name Jenkinsjob);
+                        export AWS_ACCESS_KEY_ID=$(echo $OUT | jq -r '.Credentials''.AccessKeyId');
+                        export AWS_SECRET_ACCESS_KEY=$(echo $OUT | jq -r '.Credentials''.SecretAccessKey');
+                        export AWS_SESSION_TOKEN=$(echo $OUT | jq -r '.Credentials''.SessionToken');
+                        echo "$AWS_ACCESS_KEY_ID,$AWS_SECRET_ACCESS_KEY,$AWS_SESSION_TOKEN"
+
+//                        withAWS(region: 'eu-west-2') {
+//                            INIT_ROLE_DETAILS = assume_role(
+//                                    AWS_ACCOUNT_NAME: "nbs-cop-dev"
+//                            )
+//                            def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
+//                            env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
+//                            env.AWS_SECRET_ACCESS_KEY = ROLE_DETAILS[1].trim()
+//                            env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
+//                            s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "${service_name}/target/pacts/*.json", workingDir: '')
+//                            env.AWS_ACCESS_KEY_ID = ""
+//                            env.AWS_SECRET_ACCESS_KEY = ""
+//                            env.AWS_SESSION_TOKEN = ""
+
+                            unset AWS_ACCESS_KEY_ID
+                            unset AWS_SECRET_ACCESS_KEY
+                            unset AWS_SESSION_TOKEN
                         }
                     }
                 }
         }
 
+    }
+def move_contract_to_artifactory() {
+    //env.release_name = release_name
+    def artifactory_username = env.ARTIFACTORY_USERNAME
+    def artifactory_password = env.ARTIFACTORY_PASSWORD
+    //mask artifactory credentials in Jenkins logs
+    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: artifactory_username, var: 'artifactory_username'],[password: artifactory_password, var: 'artifactory_password']]]){
+        sh """
+            curl -k -u ${artifactory_username}:${artifactory_password} ${ARTIFACTORY_URL}/openbanking-gen-rel-local/cbt-spike/cunsumer-zodiac/${BUILD_NUMBER}/ -T ${service_name}/target/pacts/Consumer-Zodiac-Provider-Date-Validate.json
+            echo "SUCCESS"
+        """
     }
 }
