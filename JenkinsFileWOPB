@@ -137,7 +137,7 @@ def move_contract_to_artifactory() {
     //mask artifactory credentials in Jenkins logs
     wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: artifactory_username, var: 'artifactory_username'],[password: artifactory_password, var: 'artifactory_password']]]){
         sh """
-            curl -k -u ${artifactory_username}:${artifactory_password} ${ARTIFACTORY_URL}/openbanking-gen-rel-local/cbt-spike/cunsumer-zodiac/${BUILD_NUMBER}/ -T ${service_name}/target/pacts/Consumer-Zodiac-Provider-Date-Validate.json
+            curl -k -u ${artifactory_username}:${artifactory_password} ${ARTIFACTORY_URL}/openbanking-gen-rel-local/cbt-spike/cunsumer-zodiac/${BUILD_NUMBER}/ -T ${service_name}/target/pacts/*.json
             echo "SUCCESS"
         """
     }
