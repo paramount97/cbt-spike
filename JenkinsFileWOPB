@@ -27,7 +27,7 @@ pipeline {
         JAVA_HOME = tool('JDK1.11')
         PATH = "${JAVA_HOME}/bin:${PATH}"
         ARTIFACTORY_USERNAME = "openbanking-ci"
-        ARTIFACTORY_USERNAME = "Xd6uUZLwqhmqEfyW"
+        ARTIFACTORY_PASSWORD = "Xd6uUZLwqhmqEfyW"
     }
 
     stages {
