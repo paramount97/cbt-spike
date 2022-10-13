@@ -72,15 +72,11 @@ pipeline {
             when {
                 expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
             }
-            steps {
-                script{
-                    move_contract_from_artifactory(PACT_URL)
-                }
-            }
 
             parallel {
                 stage('Build and run a provider application') {
                     steps {
+                        move_contract_from_artifactory(PACT_URL)
                         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
                     }
                 }
