@@ -20,17 +20,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Provider("Provider-Date-Validate")
 @Consumer("Consumer-Zodiac")
-//@PactFolder("pacts")
-@PactBroker(
-        url = "http://10.164.13.41:9292/",
-//        url = "https://nbscop.pactflow.io/",
-        providerBranch = "main",
-        enablePendingPacts = "true",
-        authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
-)
+@PactFolder("pacts")
+//@PactBroker(
+//        url = "http://10.164.13.41:9292/",
+////        url = "https://nbscop.pactflow.io/",
+//        providerBranch = "main",
+//        enablePendingPacts = "true",
+//        authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
+//)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProviderDatePactTest {
+public class ProviderPactTestWOBroker {
 
 
     @TestTemplate
@@ -52,11 +52,11 @@ public class ProviderDatePactTest {
         context.setTarget(new HttpTestTarget("localhost", 8083));
     }
 
-    @State("User sends valid date")
+    @State("valid date from provider")
     public void toValidState() {
     }
 
-    @State("User sends invalid date")
+    @State("Invalid date from provider")
     public void toInvalidState() { }
 
 }

@@ -83,7 +83,7 @@ pipeline {
                 stage('Run pact test') {
                     steps {
                         sh "sleep 10"
-                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest=ProviderDatePactTest"
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest=ProviderPactTestWOBroker"
                         sh "sleep 5"
                         sh "curl -X POST localhost:8083/actuator/shutdown"
                     }
