@@ -72,13 +72,12 @@ pipeline {
             when {
                 expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
             }
-            stage('Retrieving pact from artifactory'){
-                steps {
-                    script{
-                        move_contract_from_artifactory(PACT_URL)
-                    }
+            steps {
+                script{
+                    move_contract_from_artifactory(PACT_URL)
                 }
             }
+
             parallel {
                 stage('Build and run a provider application') {
                     steps {
