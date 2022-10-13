@@ -20,13 +20,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Provider("Provider-Date-Validate")
 @Consumer("Consumer-Zodiac")
-//@PactFolder("pacts")
 @PactBroker(
         url = "http://10.164.13.41:9292/",
-//        url = "https://nbscop.pactflow.io/",
         providerBranch = "main",
-        enablePendingPacts = "true",
-        authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
+        enablePendingPacts = "true"
 )
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -56,14 +56,8 @@ pipeline {
             }
             steps {
                 script {
-//                 env.service_name = SERVICE_TO_BUILD
-//                 echo "SERVICE_TO_BUILD: '${SERVICE_TO_BUILD}'"
-//                 if (service_name == "consumer-zodiac"){
                     sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
                     move_contract_to_artifactory()
-//                 } else {
-//                     utilities_deploy(SERVICE_TO_BUILD)
-//                 }
                 }
             }
         }
@@ -83,7 +77,7 @@ pipeline {
                 stage('Run pact test') {
                     steps {
                         sh "sleep 10"
-                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest=ProviderPactTestWOBroker"
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -Dtest=ProviderPactTestWOBroker"
                         sh "sleep 5"
                         sh "curl -X POST localhost:8083/actuator/shutdown"
                     }
@@ -91,16 +85,6 @@ pipeline {
             }
         }
 
-//        stage('Uploading pact into artifactory'){
-//            when {
-//                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
-//            }
-//            steps {
-//                script{
-//                    move_contract_to_artifactory()
-//                }
-//            }
-//        }
 
 //        stage('Uploading pact into S3'){
 //            when {

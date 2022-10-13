@@ -21,13 +21,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Provider("Provider-Date-Validate")
 @Consumer("Consumer-Zodiac")
 @PactFolder("pacts")
-//@PactBroker(
-//        url = "http://10.164.13.41:9292/",
-////        url = "https://nbscop.pactflow.io/",
-//        providerBranch = "main",
-//        enablePendingPacts = "true",
-//        authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
-//)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProviderPactTestWOBroker {
@@ -39,13 +32,6 @@ public class ProviderPactTestWOBroker {
         context.verifyInteraction();
     }
 
-    @BeforeAll
-    static void enablePublishingPact() {
-        System.setProperty("pact.verifier.publishResults", "true");
-        System.setProperty("pact.provider.version", "yf495h");
-        System.setProperty("pact.provider.branch", "main");
-//        System.setProperty("pact.provider.tag", "test");
-    }
 
     @BeforeEach
     void before(PactVerificationContext context) {
