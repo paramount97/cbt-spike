@@ -20,6 +20,9 @@ pipeline {
                 name: 'SERVICE_TO_BUILD',
                 choices: ['consumer-zodiac', 'provider-date-validate'],
                 description: 'This will be the path to your pom for building the project')
+        string(
+                name: 'PACT_URL',
+                description: 'URL for the pact file provided')
     }
 
     environment {
@@ -47,7 +50,7 @@ pipeline {
             }
         }
 
-        stage('Pact-publish') {
+        stage('Pact-publish to artifactory') {
             when {
                 expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
             }
@@ -57,6 +60,7 @@ pipeline {
 //                 echo "SERVICE_TO_BUILD: '${SERVICE_TO_BUILD}'"
 //                 if (service_name == "consumer-zodiac"){
                     sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+                    move_contract_to_artifactory()
 //                 } else {
 //                     utilities_deploy(SERVICE_TO_BUILD)
 //                 }
@@ -67,6 +71,13 @@ pipeline {
         stage('Pact-verify') {
             when {
                 expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
+            }
+            stage('Retrieving pact from artifactory'){
+                steps {
+                    script{
+                        move_contract_from_artifactory(PACT_URL)
+                    }
+                }
             }
             parallel {
                 stage('Build and run a provider application') {
@@ -85,16 +96,16 @@ pipeline {
             }
         }
 
-        stage('Uploading pact into artifactory'){
-            when {
-                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
-            }
-            steps {
-                script{
-                    move_contract_to_artifactory()
-                }
-            }
-        }
+//        stage('Uploading pact into artifactory'){
+//            when {
+//                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
+//            }
+//            steps {
+//                script{
+//                    move_contract_to_artifactory()
+//                }
+//            }
+//        }
 
 //        stage('Uploading pact into S3'){
 //            when {
@@ -141,4 +152,16 @@ def move_contract_to_artifactory() {
             echo "SUCCESS"
         """
     }
+}
+
+def move_contract_from_artifactory(String pactUrl) {
+    env.pactUrl = pactUrl
+    def artifactory_username = env.ARTIFACTORY_USERNAME
+    def artifactory_password = env.ARTIFACTORY_PASSWORD
+        sh """
+            cd $WORKSPACE
+            wget --user=${artifactory_username} --password=${artifactory_password} -P ${service_name}/pacts/ ${pactUrl}
+            echo "SUCCESS"
+        """
+
 }

@@ -8,6 +8,7 @@ import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker;
 import au.com.dius.pact.provider.junitsupport.loader.PactBrokerAuth;
+import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
@@ -19,14 +20,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Provider("Provider-Date-Validate")
 @Consumer("Consumer-Zodiac")
-//@PactFolder("pacts")
-@PactBroker(
-        url = "http://10.164.13.41:9292/",
-//        url = "https://nbscop.pactflow.io/",
-        providerBranch = "main",
-        enablePendingPacts = "true",
-        authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
-)
+@PactFolder("pacts")
+//@PactBroker(
+//        url = "http://10.164.13.41:9292/",
+////        url = "https://nbscop.pactflow.io/",
+//        providerBranch = "main",
+//        enablePendingPacts = "true",
+//        authentication = @PactBrokerAuth(token= "RoYnhMmcBDaNVBrZZqIN7Q")
+//)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProviderDatePactTest {
