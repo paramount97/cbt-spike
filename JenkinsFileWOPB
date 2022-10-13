@@ -58,6 +58,7 @@ pipeline {
                 script {
                     sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
                     move_contract_to_artifactory()
+                    s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "${service_name}/target/pacts/*.json", workingDir: '')
                 }
             }
         }
