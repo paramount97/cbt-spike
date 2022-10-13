@@ -52,11 +52,11 @@ public class ProviderPactTestWOBroker {
         context.setTarget(new HttpTestTarget("localhost", 8083));
     }
 
-    @State("valid date from provider")
+    @State("User sends valid date")
     public void toValidState() {
     }
 
-    @State("Invalid date from provider")
+    @State("User sends invalid date")
     public void toInvalidState() { }
 
 }
