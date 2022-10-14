@@ -67,7 +67,6 @@ pipeline {
                     unset AWS_ACCESS_KEY_ID
                     unset AWS_SECRET_ACCESS_KEY
                     unset AWS_SESSION_TOKEN
-                    move_contract_to_artifactory()
                 }
             }
         }
@@ -79,7 +78,6 @@ pipeline {
             parallel {
                 stage('Build and run a provider application') {
                     steps {
-                        move_contract_from_artifactory(PACT_URL)
                         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
                     }
                 }
@@ -106,28 +104,3 @@ pipeline {
     }
 }
 
-
-def move_contract_to_artifactory() {
-    //env.release_name = release_name
-    def artifactory_username = env.ARTIFACTORY_USERNAME
-    def artifactory_password = env.ARTIFACTORY_PASSWORD
-    //mask artifactory credentials in Jenkins logs
-    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: artifactory_username, var: 'artifactory_username'],[password: artifactory_password, var: 'artifactory_password']]]){
-        sh """
-            curl -k -u ${artifactory_username}:${artifactory_password} ${ARTIFACTORY_URL}/openbanking-gen-rel-local/cbt-spike/cunsumer-zodiac/${BUILD_NUMBER}/ -T ${service_name}/target/pacts/*.json
-            echo "SUCCESS"
-        """
-    }
-}
-
-def move_contract_from_artifactory(String pactUrl) {
-    env.pactUrl = pactUrl
-    def artifactory_username = env.ARTIFACTORY_USERNAME
-    def artifactory_password = env.ARTIFACTORY_PASSWORD
-        sh """
-            cd $WORKSPACE
-            wget --user=${artifactory_username} --password=${artifactory_password} -P ${service_name}/pacts/ ${pactUrl}
-            echo "SUCCESS"
-        """
-
-}
