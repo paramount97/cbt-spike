@@ -87,7 +87,7 @@ pipeline {
             }
             parallel {
                 stage('Build and run a provider application') {
-                    steps {
+                    script {
                         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
                         sh '''
                             echo
