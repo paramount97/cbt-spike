@@ -50,7 +50,7 @@ pipeline {
             }
         }
 
-        stage('Pact-publish to artifactory and S3') {
+        stage('Create pact and publish to S3') {
             when {
                 expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
             }
@@ -81,7 +81,7 @@ pipeline {
             }
         }
 
-        stage('Pact-verify') {
+        stage('Download pact from s3'){
             when {
                 expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
             }
@@ -112,6 +112,12 @@ pipeline {
                     env.AWS_SESSION_TOKEN = ""
                 }
             }
+        }
+
+        stage('Pact-verify') {
+            when {
+                expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
+            }
             parallel {
                 stage('Build and run a provider application') {
                     steps{
@@ -124,7 +130,6 @@ pipeline {
                         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -Dtest=ProviderPactTestWOBroker"
                         sh "sleep 5"
                         sh "curl -X POST localhost:8083/actuator/shutdown"
-
                     }
                 }
             }
