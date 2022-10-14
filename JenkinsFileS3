@@ -54,16 +54,18 @@ pipeline {
             steps {
                 script {
                     sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
-                    OUT=$(aws sts assume-role --role-arn arn:aws:iam::329364001920:role/nbs-cop-dev-role-spoke-cicd --role-session-name Jenkinsjob);
-                    export AWS_ACCESS_KEY_ID=$(echo $OUT | jq -r '.Credentials''.AccessKeyId');
-                    export AWS_SECRET_ACCESS_KEY=$(echo $OUT | jq -r '.Credentials''.SecretAccessKey');
-                    export AWS_SESSION_TOKEN=$(echo $OUT | jq -r '.Credentials''.SessionToken');
+                    set +x;
+                    OUT=$(aws sts assume-role --role-arn arn:aws:iam::329364001920:role/nbs-cop-dev-role-spoke-cicd --role-session-name Jenkinsjob)
+                    export AWS_ACCESS_KEY_ID=$(echo $OUT | jq -r '.Credentials''.AccessKeyId')
+                    export AWS_SECRET_ACCESS_KEY=$(echo $OUT | jq -r '.Credentials''.SecretAccessKey')
+                    export AWS_SESSION_TOKEN=$(echo $OUT | jq -r '.Credentials''.SessionToken')
                     //REMOVE THIS AFTER
                     echo "$AWS_ACCESS_KEY_ID,$AWS_SECRET_ACCESS_KEY,$AWS_SESSION_TOKEN"
                     s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "${service_name}/target/pacts/*.json", workingDir: '')
                     unset AWS_ACCESS_KEY_ID
                     unset AWS_SECRET_ACCESS_KEY
                     unset AWS_SESSION_TOKEN
+                    set -x;
                 }
             }
         }
