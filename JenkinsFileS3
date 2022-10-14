@@ -85,35 +85,35 @@ pipeline {
             when {
                 expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
             }
-            parallel {
-                stage('Build and run a provider application') {
-                    steps{
-                        script{
-                            sh '''
+            steps{
+                script{
+                    sh '''
                             echo
                             find . | sed -e "s/[^-][^\\/]*\\// |/g" -e "s/|\\([^ ]\\)/|-\\1/"
                             echo
                             exit                   
                             '''
-                            env.AWS_ACCESS_KEY_ID = ""
-                            env.AWS_SECRET_ACCESS_KEY = ""
-                            env.AWS_SESSION_TOKEN = ""
-                            INIT_ROLE_DETAILS = assume_role()
-                            def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
-                            env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
-                            env.AWS_SECRET_ACCESS_KEY= ROLE_DETAILS[1].trim()
-                            env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
-                            withAWS(region:'eu-west-2') {
-                                s3Download(file: "*.json", bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${JOB_NUMBER}/")
-                            }
-                            sh '''
+                    env.AWS_ACCESS_KEY_ID = ""
+                    env.AWS_SECRET_ACCESS_KEY = ""
+                    env.AWS_SESSION_TOKEN = ""
+                    INIT_ROLE_DETAILS = assume_role()
+                    def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
+                    env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
+                    env.AWS_SECRET_ACCESS_KEY= ROLE_DETAILS[1].trim()
+                    env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
+                    withAWS(region:'eu-west-2') {
+                        s3Download(file: "*.json", bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${JOB_NUMBER}/")
+                    }
+                    sh '''
                             mv *${service_name}.json $WORKSPACE/pacts
                             '''
-                            env.AWS_ACCESS_KEY_ID = ""
-                            env.AWS_SECRET_ACCESS_KEY = ""
-                            env.AWS_SESSION_TOKEN = ""
-                        }
-                    }
+                    env.AWS_ACCESS_KEY_ID = ""
+                    env.AWS_SECRET_ACCESS_KEY = ""
+                    env.AWS_SESSION_TOKEN = ""
+                }
+            }
+            parallel {
+                stage('Build and run a provider application') {
                     steps{
                         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
                     }
