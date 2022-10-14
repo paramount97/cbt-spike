@@ -101,7 +101,7 @@ pipeline {
                     env.AWS_SECRET_ACCESS_KEY= ROLE_DETAILS[1].trim()
                     env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
                     withAWS(region:'eu-west-2') {
-                        s3Download(file: "${service_name}/pacts", bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${JOB_NUMBER}/")
+                        s3Download(file: "${service_name}/pacts", bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${JOB_NUMBER}/", force:true)
                     }
                     sh '''
                             echo
