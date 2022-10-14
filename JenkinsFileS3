@@ -20,9 +20,6 @@ pipeline {
                 name: 'SERVICE_TO_BUILD',
                 choices: ['consumer-zodiac', 'provider-date-validate'],
                 description: 'This will be the path to your pom for building the project')
-        string(
-                name: 'PACT_URL',
-                description: 'URL for the pact file provided')
     }
 
     environment {
