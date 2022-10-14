@@ -54,7 +54,7 @@ pipeline {
             steps {
                 script {
                     sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
-                    find . | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
+                    sh "find . | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/""
                     env.AWS_ACCESS_KEY_ID = ""
                     env.AWS_SECRET_ACCESS_KEY = ""
                     env.AWS_SESSION_TOKEN = ""
