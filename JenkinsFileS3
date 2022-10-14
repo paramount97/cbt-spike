@@ -64,7 +64,7 @@ pipeline {
                     env.AWS_SECRET_ACCESS_KEY= ROLE_DETAILS[1].trim()
                     env.AWS_SESSION_TOKEN = ROLE_DETAILS[2].trim()
                     withAWS(region:'eu-west-2') {
-                        s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "**/${service_name}*.json", workingDir: '${service_name}/target/pacts')
+                        s3Upload(bucket: "nbs-cop-dev-eu-west-1-sit-testharness", path: "CBT-Spike/${BUILD_NUMBER}/", includePathPattern: "**/${service_name}*.json", workingDir: "${service_name}/target/pacts")
                     }
                     env.AWS_ACCESS_KEY_ID = ""
                     env.AWS_SECRET_ACCESS_KEY = ""
