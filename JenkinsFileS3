@@ -69,6 +69,8 @@ pipeline {
                         if [ `ls -F -1 | grep "/" | wc -l` = 0 ]   # check if no folders
                            then echo "   -> no sub-directories"
                            fi
+                           
+                        find . | sed -e "s/[^-][^\\/]*\\// |/g" -e "s/|\\([^ ]\\)/|-\\1/"
                         echo
                         exit                   
                     '''
