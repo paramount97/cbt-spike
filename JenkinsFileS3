@@ -68,9 +68,7 @@ pipeline {
                     env.AWS_ACCESS_KEY_ID = ""
                     env.AWS_SECRET_ACCESS_KEY = ""
                     env.AWS_SESSION_TOKEN = ""
-                    INIT_ROLE_DETAILS = assume_role(
-                            AWS_ACCOUNT_NAME: "$AWS_ACCOUNT_NAME"
-                    )
+                    INIT_ROLE_DETAILS = assume_role()
                     def ROLE_DETAILS = INIT_ROLE_DETAILS.split(",")
                     env.AWS_ACCESS_KEY_ID = ROLE_DETAILS[0].trim()
                     env.AWS_SECRET_ACCESS_KEY= ROLE_DETAILS[1].trim()
@@ -118,7 +116,7 @@ pipeline {
     }
 }
 
-def assume_role(String accountName){
+def assume_role(){
     role_details = sh (
             returnStdout: true,
             script: '''
