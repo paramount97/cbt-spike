@@ -105,7 +105,7 @@ pipeline {
                     sh '''
                             echo
                             find . | sed -e "s/[^-][^\\/]*\\// |/g" -e "s/|\\([^ ]\\)/|-\\1/"         
-//                            mv pact.json  ${service_name}/pacts                  
+                            mv pact.json  ${service_name}/pacts                  
                             '''
                     env.AWS_ACCESS_KEY_ID = ""
                     env.AWS_SECRET_ACCESS_KEY = ""
