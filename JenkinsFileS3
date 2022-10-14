@@ -88,6 +88,8 @@ pipeline {
             steps{
                 script{
                     sh '''
+                        echo
+                            find . | sed -e "s/[^-][^\\/]*\\// |/g" -e "s/|\\([^ ]\\)/|-\\1/"
                                                
                             '''
                     env.AWS_ACCESS_KEY_ID = ""
