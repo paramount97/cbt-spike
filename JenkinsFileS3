@@ -29,8 +29,6 @@ pipeline {
         M2_HOME = tool('NBS Maven')
         JAVA_HOME = tool('JDK1.11')
         PATH = "${JAVA_HOME}/bin:${PATH}"
-        ARTIFACTORY_USERNAME = "openbanking-ci"
-        ARTIFACTORY_PASSWORD = "Xd6uUZLwqhmqEfyW"
     }
 
     stages {
