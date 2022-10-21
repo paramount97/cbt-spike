@@ -1,4 +1,4 @@
-# Example Spring Boot project as part of CBT spike- Contract Based Testing  spike 
+# Example Spring Boot project for CBT- Contract Based Testing
 
 #### This project components are as follows:
 * consumer zodiac: Consumer microservice
