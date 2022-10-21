@@ -83,6 +83,16 @@ pipeline {
             }
         }
     }
+
+
+    post{
+        always{
+            junit(testResults: '**/$SERVICE_TO_BUILD/target/surefire-reports/*.xml' , allowEmptyResults : true)
+            script{
+                cleanWs()
+            }
+        }
+    }
 }
 
 
