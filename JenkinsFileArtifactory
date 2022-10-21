@@ -114,10 +114,11 @@ def move_contract_from_artifactory(String pactUrl) {
     env.pactUrl = pactUrl
     def artifactory_username = env.ARTIFACTORY_USERNAME
     def artifactory_password = env.ARTIFACTORY_PASSWORD
+    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: artifactory_username, var: 'artifactory_username'],[password: artifactory_password, var: 'artifactory_password']]]){
         sh """
             cd $WORKSPACE
             wget --user=${artifactory_username} --password=${artifactory_password} -P ${service_name}/pacts/ ${pactUrl}
             echo "SUCCESS"
         """
-
+    }
 }
