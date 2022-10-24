@@ -13,6 +13,7 @@ public class DateValidatorService {
     public DateResponse validateDate(String birthDate){
         try {
             LocalDate date = LocalDate.parse(birthDate);
+            date.plusDays(1);
             DateResponse response = new DateResponse(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), true);
             return response;
         } catch (DateTimeParseException e) {
