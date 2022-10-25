@@ -165,7 +165,7 @@
                         <tag>main</tag>
                         <tag>test</tag>
                     </tags>
-                    <projectVersion>e53453443</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
+                    <projectVersion>t434543</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
                     <skipPactPublish></skipPactPublish> <!-- Defaults to false -->
                 </configuration>
