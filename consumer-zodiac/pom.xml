@@ -163,9 +163,9 @@
 <!--                    <pactBrokerAuthenticationScheme>Bearer</pactBrokerAuthenticationScheme>-->
                     <tags>
                         <tag>main</tag>
-                        <tag>test</tag>
+                        <tag>Spike2</tag>
                     </tags>
-                    <projectVersion>t434543</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
+                    <projectVersion>ae34543</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
                     <skipPactPublish></skipPactPublish> <!-- Defaults to false -->
                 </configuration>
