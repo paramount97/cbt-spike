@@ -165,7 +165,7 @@
                         <tag>main</tag>
                         <tag>Spike2</tag>
                     </tags>
-                    <projectVersion>ae34876</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
+                    <projectVersion>ae8uef76</projectVersion> <!-- Defaults to ${project.version}, or you can generate your own version from git -->
                     <trimSnapshot>true</trimSnapshot> <!-- Defaults to false -->
                     <skipPactPublish></skipPactPublish> <!-- Defaults to false -->
                 </configuration>
