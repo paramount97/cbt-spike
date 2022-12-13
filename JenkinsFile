@@ -10,7 +10,7 @@ pipeline {
     parameters{
         choice (
                 name: 'CHOOSE_NODE',
-                choices: ['ansible-server2', 'ansible-server', 'ansible-server3',  'ansible-caas-test'],
+                choices: ['ansible-server3'],
                 description: 'Executor to run the build on')
         string (
                 name: 'GIT_SOURCE_BRANCH',
@@ -18,7 +18,7 @@ pipeline {
                 description: 'Source Code Branch')
         choice (
                 name: 'SERVICE_TO_BUILD',
-                choices: ['consumer-zodiac', 'provider-date-validate'],
+                choices: ['provider-date-validate'],
                 description: 'This will be the path to your pom for building the project')
     }
 
