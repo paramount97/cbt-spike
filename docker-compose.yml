@@ -30,20 +30,21 @@ services:
       # The list of allowed base URLs (not setting this makes the app vulnerable to cache poisoning)
       # This allows the app to be addressed from the host from within another docker container correctly
       PACT_BROKER_BASE_URL: 'https://localhost http://localhost http://localhost:9292 http://pact-broker:9292'
-      webhook_host_whitelist: "[/.*/]"
+      PACT_BROKER_WEBHOOK_HOST_WHITELIST: 'http://10.164.13.41:9292/ https://jenkins-blue.nbs-cop-dev.aws.nbscloud.co.uk [/.*/]'
+
 
   # Nginx is not necessary, but demonstrates how
   # one might use a reverse proxy in front of the broker,
   # and includes the use of a self-signed TLS certificate
-  nginx:
-    image: nginx:alpine
-    depends_on:
-      - pact-broker
-    volumes:
-      - ./ssl/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./ssl:/etc/nginx/ssl
-    ports:
-      - "443:443"
-      - "80:80"
+#  nginx:
+#    image: nginx:alpine
+#    depends_on:
+#      - pact-broker
+#    volumes:
+#      - ./ssl/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+#      - ./ssl:/etc/nginx/ssl
+#    ports:
+#      - "443:443"
+#      - "80:80"
 volumes:
   postgres-volume:

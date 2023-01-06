@@ -1,0 +1,111 @@
+#!groovy
+pipeline {
+    agent { label "${CHOOSE_NODE}"}
+
+    tools {
+          	maven 'NBS Maven'
+          	jdk 'JDK1.11'
+        }
+
+    parameters{
+        choice (
+                name: 'CHOOSE_NODE',
+                choices: ['ansible-server3'],
+                description: 'Executor to run the build on')
+        string (
+                name: 'GIT_SOURCE_BRANCH',
+                defaultValue: 'main',
+                description: 'Source Code Branch')
+        choice (
+                name: 'SERVICE_TO_BUILD',
+                choices: ['consumer-zodiac'],
+                description: 'This will be the path to your pom for building the project')
+    }
+
+    environment {
+        M2_HOME = tool('NBS Maven')
+        JAVA_HOME = tool('JDK1.11')
+        PATH="${JAVA_HOME}/bin:${PATH}"
+    }
+
+    stages {
+
+        stage('Preparation') {
+            steps {
+                script {
+                    cleanWs()
+                    checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_SOURCE_BRANCH}"]], userRemoteConfigs: [[url: 'https://github.com/paramount97/cbt-spike.git']]])
+                    //env.GIT_SOURCE_URL = 'https://github.com/nationwide-ccoe/nbs-cop-devtest.git'
+                    echo "Checking out branch '${scm.branches[0].name}'"
+                    env.mvnToolHome = tool('NBS Maven')
+                    env.service_name = SERVICE_TO_BUILD
+
+                }
+
+            }
+        }
+
+        stage('Pact-publish'){
+            when {
+                expression { params.SERVICE_TO_BUILD == 'consumer-zodiac' }
+            }
+            steps{
+                script{
+//                 env.service_name = SERVICE_TO_BUILD
+//                 echo "SERVICE_TO_BUILD: '${SERVICE_TO_BUILD}'"
+//                 if (service_name == "consumer-zodiac"){
+                    sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+//                 } else {
+//                     utilities_deploy(SERVICE_TO_BUILD)
+//                 }
+                }
+            }
+        }
+
+        stage('Pact-verify'){
+            when{
+                expression { params.SERVICE_TO_BUILD == 'provider-date-validate' }
+            }
+            parallel{
+                stage('Build and run a provider application'){
+                    steps{
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run"
+                    }
+                }
+                stage('Run pact test'){
+                    steps{
+                        sh "sleep 10"
+                        sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -Dtest=ProviderDatePactTest"
+                        sh "sleep 5"
+                        sh "curl -X POST localhost:8083/actuator/shutdown"
+                    }
+                }
+            }
+        }
+    }
+
+
+    post{
+        always{
+            junit(testResults: '**/$SERVICE_TO_BUILD/target/surefire-reports/*.xml' , allowEmptyResults : true)
+            script{
+                cleanWs()
+            }
+        }
+    }
+}
+
+
+// def utilities_deploy(String service_names) {
+//     env.service_name = service_names
+//     echo "MS to run is '${service_names}'"
+//     if (service_name == "consumer-zodiac") {
+//         sh "${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml clean test pact:publish"
+//     } else {
+//         sh '''${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:run  && \
+//              sleep 10  && \
+//              ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml test -DTest="ProviderDatePactTest"  && \
+//              sleep 5 && \
+//              ${mvnToolHome}/bin/mvn -f ${service_name}/pom.xml spring-boot:stop'''
+//     }
+// }
